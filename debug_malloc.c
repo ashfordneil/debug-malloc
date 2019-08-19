@@ -15,6 +15,9 @@ void* malloc(size_t rawSize) {
 
     void* allMemory = mmap(NULL, numTotalPages * page, PROT_READ | PROT_WRITE,
             MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+    if (!allMemory) {
+        return NULL;
+    }
 
     void* deadPage = allMemory + (page * numGivenPages);
     mprotect(deadPage, page, PROT_NONE);
@@ -29,6 +32,9 @@ void* malloc(size_t rawSize) {
 
 void* calloc(size_t size1, size_t size2) {
     void* output = malloc(size1 * size2);
+    if (!output) {
+        return NULL;
+    }
     memset(output, 0, size1 * size2);
     return output;
 }
@@ -42,6 +48,9 @@ void* realloc(void* start, size_t size) {
     size_t rawSize = *((size_t*) startOfMem);
 
     void* output = malloc(size);
+    if (!output) {
+        return NULL;
+    }
     memcpy(output, start, size > rawSize ? rawSize : size);
     free(start);
 
